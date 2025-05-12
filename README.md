@@ -1,3 +1,3 @@
 Enter **./main** to execute.
 
-Enter **.test** to test.
+Enter **./test** to test.
