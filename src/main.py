@@ -1,3 +1,4 @@
+import re
 from textnode import TextNode, TextType
 from leafnode import LeafNode
 
@@ -20,8 +21,32 @@ def text_node_to_html_node(text_node):
         case TextType.IMAGE:
             return LeafNode("img", None, {"src": text_node.url, "alt": text_node.content})
 
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
-    split_nodes = old_nodes.content.split(delimiter)
-    for n in split_nodes
+def split_nodes_delimiter(old_nodes, delimiter, text_type):    
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type == TextType.NORMAL:
+            split_node = node.content.split(delimiter)
+            for i, part in enumerate(split_node):
+                if i % 2 == 0:
+                    if part:
+                        new_nodes.append(TextNode(part, TextType.NORMAL))
+                else:
+                    if part:
+                        new_nodes.append(TextNode(part, text_type))
+        else:
+            new_nodes.append(node)
+    return new_nodes
 
+def extract_markdown_images(text):
+    return re.findall(r"!\[(.*)\]\((.*)\)", text)
+
+def extract_markdown_links(text):
+    return re.findall(r"\[(.*?)\]\((.*?)\)", text)
+
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for node in old_nodes:
+        if node.text_type == TextType.NORMAL:
+            
+            
 main()
