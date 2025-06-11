@@ -107,38 +107,37 @@ class TestMarkdown(unittest.TestCase):
         ]
         self.assertEqual(text_to_textnodes(text), expected_result)
 
-#     def test_markdown_to_blocks(self):
-#         md = """
-# This is **bolded** paragraph
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
 
-# This is another paragraph with _italic_ text and `code` here
-# This is the same paragraph on a new line
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
 
-# - This is a list
-# - with items
-# """
-#         blocks = markdown_to_blocks(md)
-#         self.assertEqual(
-#             blocks,
-#             [
-#                 "This is **bolded** paragraph",
-#                 "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
-#                 "- This is a list\n- with items",
-#             ],
-#         )
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
 
-    # def test_text_to_children(self):
-    #     text = "This is a **bolded** paragraph with an _italic_ word."
-    #     html = text_to_children(text)
-    #     expected_result = [
-    #         HTMLNode(None, "This is a ", None, None),
-    #         HTMLNode("b", "bolded", None, None),
-    #         HTMLNode(None, " paragraph with an ", None, None),
-    #         HTMLNode("i", "italic",None, None),
-    #         HTMLNode(None, " word.", None, None)
-    #     ]
-    #     # print(f"html: {html}\nexpected_result: {expected_result}")
-    #     self.assertEqual(html, expected_result)
+    def test_text_to_children(self):
+        text = "This is a **bolded** paragraph with an _italic_ word."
+        html = text_to_children(text)
+        expected_result = [
+            HTMLNode(None, "This is a ", None, None),
+            HTMLNode("b", "bolded", None, None),
+            HTMLNode(None, " paragraph with an ", None, None),
+            HTMLNode("i", "italic",None, None),
+            HTMLNode(None, " word.", None, None)
+        ]
+        self.assertEqual(html, expected_result)
 
     # def test_text_to_ordered_list(self):
     #     text = "1. Preheat oven to **400**\n2. Bake pizza for _15 minutes_\n3. Enjoy"
@@ -165,28 +164,26 @@ This is another paragraph with _italic_ text and `code` here
 """
 
         node = markdown_to_html_node(md)
-        print(f"\nnode: {node}")
         html = node.to_html()
-        print(f"\nhtml: {html}")
         self.assertEqual(
             html,
             "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
         )
 
-#     def test_codeblock(self):
-#         md = """
-# ```
-# This is text that _should_ remain
-# the **same** even with inline stuff
-# ```
-# """
+    def test_codeblock(self):
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+"""
 
-#         node = markdown_to_html_node(md)
-#         html = node.to_html()
-#         self.assertEqual(
-#             html,
-#             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
-#         )
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
 
 if __name__ == "__main__":
     unittest.main()

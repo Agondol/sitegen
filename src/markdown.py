@@ -118,11 +118,19 @@ def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     html = []
     for b in blocks:
-        match(block_to_block_type(b)):
+        block_type = block_to_block_type(b)
+        match(block_type):
             case BlockType.PARAGRAPH:
                 html.append(ParentNode("p", text_to_children(b)))
             case BlockType.CODE:
-                html.append(ParentNode("pre", [LeafNode("code", b)]))
+                code_block = []
+                split_block = b.replace("```", "").split('\n')
+                for l in split_block:
+                    if l == "":
+                        continue
+                    code_block.append(l)
+                code_block_string = ("\n".join(code_block)) + "\n"
+                html.append(ParentNode("pre", [LeafNode("code", code_block_string)]))
             case BlockType.QUOTE:
                 html.append(ParentNode("blockquote", text_to_children(b)))
             case BlockType.ORDERED_LIST:
@@ -134,7 +142,7 @@ def markdown_to_html_node(markdown):
     return ParentNode("div", html)
 
 def text_to_children(text):
-    nodes = text_to_textnodes(text)
+    nodes = text_to_textnodes(text.replace("\n", " "))
     new_nodes = []
     for n in nodes:
         new_nodes.append(text_node_to_html_node(n))

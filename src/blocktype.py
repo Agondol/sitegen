@@ -12,7 +12,7 @@ class BlockType(enum.Enum):
 def block_to_block_type(block):
     if re.match(r"#{1,6} .*", block):
         return BlockType.HEADING
-    if re.match(r"`{3}.*?`{3}", block):
+    if re.match(r"`{3}(.|\n)*`{3}", block):
         return BlockType.CODE
     quote = True
     unordered_list = True
