@@ -131,9 +131,7 @@ def markdown_to_html_node(markdown):
             case BlockType.UNORDERED_LIST:
                 html.append(ParentNode("ul", text_to_unordered_list(b)))
             case BlockType.HEADING:
-                # html.append(text_to_heading(b))
-                pass
-    print(f"\nhtml: {html}")
+                html.append(text_to_heading(b))
     return ParentNode("div", html)
 
 def text_to_code_block(text):
@@ -153,28 +151,16 @@ def text_to_children(text):
     return new_nodes
 
 def text_to_heading(text):
-    print(f"\ntext: {text}")
     nodes = text_to_children(text)
-    print(f"\nnodes: {nodes}")
-    new_nodes = []
     children = []
     for n in nodes:
         node = n
-        print(f"\nnode: {node}")
         matches = re.match(r"\s*(#{1,6}) ", node.value)
         if matches:
-            if len(children):
-                new_nodes.append(ParentNode(tag, children))
-                children = []
-            tag = "h" + str(len(matches[1]))
+            heading_tag = "h" + str(len(matches[1]))
             node.value = node.value.replace(matches[0], "")
-            children.append(node)           
-        else:
-            children.append(node)
-    if len(children):
-        new_nodes.append(ParentNode(tag, children))
-    print(f"\nnew nodes: {new_nodes}")
-    return new_nodes
+        children.append(node)            
+    return ParentNode(heading_tag, children)
 
 def text_to_ordered_list(text):
     nodes = text_to_children(text)
