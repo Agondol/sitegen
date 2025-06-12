@@ -10,7 +10,7 @@ class BlockType(enum.Enum):
     ORDERED_LIST = "ordered_list"
 
 def block_to_block_type(block):
-    if re.match(r"#{1,6} .*", block):
+    if re.match(r"#{1,6} ", block):
         return BlockType.HEADING
     if re.match(r"`{3}(.|\n)*`{3}", block):
         return BlockType.CODE
@@ -19,9 +19,9 @@ def block_to_block_type(block):
     ordered_list = True
     lines = block.split("\n")
     for i, l in enumerate(lines):
-        if not re.match(r">.*", l):
+        if not re.match(r">", l):
             quote = False
-        if not re.match(r"- .*", l):
+        if not re.match(r"-", l):
             unordered_list = False
         matches = re.match(r"(\d+)\. ", l)
         if not matches:

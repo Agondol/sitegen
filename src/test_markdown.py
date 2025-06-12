@@ -10,7 +10,7 @@ from markdown import (
     markdown_to_blocks,
     text_to_children,
     markdown_to_html_node,
-    #text_to_ordered_list,
+    extract_title,
 )
 
 from textnode import (
@@ -210,6 +210,31 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+    def test_extract_title(self):
+        text = """
+This is a test line.
+
+# This is a test header.
+
+This is another test line.
+"""
+        title = extract_title(text)
+        expected_result = "This is a test header."
+        self.assertEqual(title, expected_result)
+
+    def test_extract_title_exception(self):
+        text = """
+This is a test line.
+
+This is another test line.
+"""
+        try:
+            title = extract_title(text)
+        except:
+            title = "Exception thrown"
+        expected_result = "Exception thrown"
+        self.assertEqual(title, expected_result)
 
 if __name__ == "__main__":
     unittest.main()

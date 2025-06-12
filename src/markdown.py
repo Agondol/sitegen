@@ -163,42 +163,29 @@ def text_to_heading(text):
     return ParentNode(heading_tag, children)
 
 def text_to_ordered_list(text):
-    nodes = text_to_children(text)
-    new_nodes = []
-    children = []
-    for n in nodes:
-        node = n
-        matches = re.match(r"\s*\d+\. ", node.value)
+    split_text = text.split("\n")
+    nodes = []
+    for i, t in enumerate(split_text):
+        matches = re.match(r"((\d+)\.)", t)
         if matches:
-            if len(children):
-                new_nodes.append(ParentNode("li", children))
-                children = []
-            node.value = node.value.replace(matches[0], "")
-            children.append(node)
+            if matches[2] == str(i + 1):
+                list_item_text = t.replace(matches[0], "").strip()
+                children = text_to_children(list_item_text)
+                nodes.append(ParentNode("li", children))
+            else:
+                raise ValueError("Ordered list not in numerical order.")
         else:
-            children.append(node)
-    if len(children):
-        new_nodes.append(ParentNode("li", children))
-    return new_nodes
+            raise ValueError("Invalid ordered list item foundk.")
+    return nodes
 
 def text_to_unordered_list(text):
-    nodes = text_to_children(text)
-    new_nodes = []
-    children = []
-    for n in nodes:
-        node = n
-        matches = re.match(r"\s*- ", node.value)
-        if matches:
-            if len(children):
-                new_nodes.append(ParentNode("li", children))
-                children = []
-            node.value = node.value.replace(matches[0], "")
-            children.append(node)
-        else:
-            children.append(node)
-    if len(children):
-        new_nodes.append(ParentNode("li", children))
-    return new_nodes
+    split_text = text.split("\n")
+    nodes = []
+    for t in split_text:
+        list_item_text = t[1:].strip()
+        children = text_to_children(list_item_text)
+        nodes.append(ParentNode("li", children))
+    return nodes
 
 def text_to_quote(text):
     nodes = text_to_children(text)
@@ -208,3 +195,11 @@ def text_to_quote(text):
         node.value = node.value.replace(" > ", "\n").replace("> ", "")
         new_nodes.append(node)
     return new_nodes
+
+def extract_title(markdown):
+    blocks = markdown_to_blocks(markdown)
+    for b in blocks:
+        matches = re.match(r"# ", b)
+        if matches:
+            return b.replace(matches[0], "")
+    raise ValueError("No heading was found.")

@@ -1,5 +1,6 @@
 from file_ops import (
     copy_contents,
+    generate_pages_recursive,
 )
 
 from textnode import (
@@ -12,8 +13,7 @@ DESTINATION_DIRECTORY = r"/home/agondol/Documents/Courses/BootDev/sitegen/public
 
 def main():
     copy_contents(SOURCE_DIRECTORY, DESTINATION_DIRECTORY)
-    node = TextNode("Boot.Dev is cool!", TextType.LINK, "https://boot.dev")
-    print(node)
+    generate_pages_recursive("./content", "./template.html", "./public")
 
 if __name__ == "__main__":
     main()
