@@ -123,23 +123,27 @@ def markdown_to_html_node(markdown):
             case BlockType.PARAGRAPH:
                 html.append(ParentNode("p", text_to_children(b)))
             case BlockType.CODE:
-                code_block = []
-                split_block = b.replace("```", "").split('\n')
-                for l in split_block:
-                    if l == "":
-                        continue
-                    code_block.append(l)
-                code_block_string = ("\n".join(code_block)) + "\n"
-                html.append(ParentNode("pre", [LeafNode("code", code_block_string)]))
+                html.append(ParentNode("pre", [LeafNode("code", text_to_code_block(b))]))
             case BlockType.QUOTE:
-                html.append(ParentNode("blockquote", text_to_children(b)))
+                html.append(ParentNode("blockquote", text_to_quote(b)))
             case BlockType.ORDERED_LIST:
                 html.append(ParentNode("ol", text_to_ordered_list(b)))
             case BlockType.UNORDERED_LIST:
                 html.append(ParentNode("ul", text_to_unordered_list(b)))
             case BlockType.HEADING:
-                text_to_heading(b)
+                # html.append(text_to_heading(b))
+                pass
+    print(f"\nhtml: {html}")
     return ParentNode("div", html)
+
+def text_to_code_block(text):
+    code_block = []
+    split_block = text.replace("```", "").split('\n')
+    for l in split_block:
+        if l == "":
+            continue
+        code_block.append(l)
+    return ("\n".join(code_block)) + "\n"
 
 def text_to_children(text):
     nodes = text_to_textnodes(text.replace("\n", " "))
@@ -149,11 +153,72 @@ def text_to_children(text):
     return new_nodes
 
 def text_to_heading(text):
-    pass
+    print(f"\ntext: {text}")
+    nodes = text_to_children(text)
+    print(f"\nnodes: {nodes}")
+    new_nodes = []
+    children = []
+    for n in nodes:
+        node = n
+        print(f"\nnode: {node}")
+        matches = re.match(r"\s*(#{1,6}) ", node.value)
+        if matches:
+            if len(children):
+                new_nodes.append(ParentNode(tag, children))
+                children = []
+            tag = "h" + str(len(matches[1]))
+            node.value = node.value.replace(matches[0], "")
+            children.append(node)           
+        else:
+            children.append(node)
+    if len(children):
+        new_nodes.append(ParentNode(tag, children))
+    print(f"\nnew nodes: {new_nodes}")
+    return new_nodes
 
 def text_to_ordered_list(text):
-    nodes = text_to_textnodes(text)
+    nodes = text_to_children(text)
     new_nodes = []
+    children = []
+    for n in nodes:
+        node = n
+        matches = re.match(r"\s*\d+\. ", node.value)
+        if matches:
+            if len(children):
+                new_nodes.append(ParentNode("li", children))
+                children = []
+            node.value = node.value.replace(matches[0], "")
+            children.append(node)
+        else:
+            children.append(node)
+    if len(children):
+        new_nodes.append(ParentNode("li", children))
+    return new_nodes
 
 def text_to_unordered_list(text):
-    pass
+    nodes = text_to_children(text)
+    new_nodes = []
+    children = []
+    for n in nodes:
+        node = n
+        matches = re.match(r"\s*- ", node.value)
+        if matches:
+            if len(children):
+                new_nodes.append(ParentNode("li", children))
+                children = []
+            node.value = node.value.replace(matches[0], "")
+            children.append(node)
+        else:
+            children.append(node)
+    if len(children):
+        new_nodes.append(ParentNode("li", children))
+    return new_nodes
+
+def text_to_quote(text):
+    nodes = text_to_children(text)
+    new_nodes = []
+    for n in nodes:
+        node = n
+        node.value = node.value.replace(" > ", "\n").replace("> ", "")
+        new_nodes.append(node)
+    return new_nodes

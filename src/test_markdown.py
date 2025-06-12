@@ -139,19 +139,46 @@ This is the same paragraph on a new line
         ]
         self.assertEqual(html, expected_result)
 
-    # def test_text_to_ordered_list(self):
-    #     text = "1. Preheat oven to **400**\n2. Bake pizza for _15 minutes_\n3. Enjoy"
-    #     html = text_to_ordered_list(text)
-    #     expected_result = [
-    #         HTMLNode("li", "Prehead oven to ", [
-    #             HTMLNode("b", "400", None, None),
-    #         ], None),
-    #         HTMLNode("li", "Bake pizza for ", [
-    #             HTMLNode("i", "15 minutes", None, None),
-    #         ], None),
-    #         HTMLNode("li", "Enjoy", None, None)
-    #     ]
-    #     self.assertEqual(html, expected_result)
+    def test_ordered_list(self):
+        text = "1. Preheat oven to **400**\n2. Bake pizza for _15 minutes_\n3. Enjoy"
+        node = markdown_to_html_node(text)
+        html = node.to_html()
+        expected_result = "<div><ol><li>Preheat oven to <b>400</b></li><li>Bake pizza for <i>15 minutes</i></li><li>Enjoy</li></ol></div>"
+        self.assertEqual(html, expected_result)
+
+    def test_unordered_list(self):
+        text = "- Preheat oven to **400**\n- Bake pizza for _15 minutes_\n- Enjoy"
+        node = markdown_to_html_node(text)
+        html = node.to_html()
+        expected_result = "<div><ul><li>Preheat oven to <b>400</b></li><li>Bake pizza for <i>15 minutes</i></li><li>Enjoy</li></ul></div>"
+        self.assertEqual(html, expected_result)
+
+    def test_quote(self):
+        text = "> To be or _not_ to be,\n> that **is** the question."
+        node = markdown_to_html_node(text)
+        html = node.to_html()
+        expected_result = "<div><blockquote>To be or <i>not</i> to be,\nthat <b>is</b> the question.</blockquote></div>"
+        self.assertEqual(html, expected_result)
+
+#     def test_heading(self):
+#         text = """
+# # Heading 1
+
+# ## Heading 2
+
+# ### Heading 3
+
+# #### Heading 4
+
+# ##### Heading 5
+
+# ###### Heading 6
+# """
+#         node = markdown_to_html_node(text)
+#         print(f"\ntest node: {node}")
+#         html = node.to_html()
+#         expected_result = "<div><h1>Heading 1</h1><h2>Heading 2</h2><h3>Heading 3</h3><h4>Heading 4</h4><h5>Heading 5</h5><h6>Heading 6</h6></div>"
+#         self.assertEqual(html, expected_result)
 
     def test_paragraphs(self):
         md = """
