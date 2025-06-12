@@ -13,7 +13,7 @@ from htmlnode import (
     ParentNode
 )
 
-def copy_contents(source, destination, basepath):
+def copy_contents(source, destination):
     if os.path.exists(destination):
         dir_contents = os.listdir(destination)
         if len(dir_contents):
@@ -25,10 +25,6 @@ def copy_contents(source, destination, basepath):
                 else:
                     print(f"Removing file {destination_item}.")
                     os.remove(destination_item)
-        
-        if basepath != "":
-            destination += f"/{basepath}"
-            os.mkdir(destination)
 
         if os.path.exists(source):
             dir_contents = os.listdir(source)
@@ -42,7 +38,7 @@ def copy_contents(source, destination, basepath):
                     else:                        
                         print(f"Creating directory {destination_item}.")
                         os.mkdir(destination_item)
-                        copy_contents(source_item, destination_item, "")
+                        copy_contents(source_item, destination_item)
         else:
             raise FileNotFoundError("The source directory does not exist!")
     else:
@@ -65,8 +61,8 @@ def generate_page(from_path, template_path, dest_path, basepath):
     title = extract_title(from_contents)
     template_contents = template_contents.replace("{{ Title }}", title)
     template_contents = template_contents.replace("{{ Content }}", html)
-    #template_contents = template_contents.replace('href="/', f'href="/{basepath}/')
-    #template_contents = template_contents.replace('src="/', f'src="/{basepath}/')
+    template_contents = template_contents.replace('href="/', f'href="/{basepath}/')
+    template_contents = template_contents.replace('src="/', f'src="/{basepath}/')
     if not os.path.exists(dest_path):
         split_path = dest_path.split('/')[0:-1]
         current_path = ""

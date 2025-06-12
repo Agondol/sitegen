@@ -18,8 +18,8 @@ def main(args = ""):
         basepath = sys.argv[1]
     else:
         basepath = ""
-    copy_contents(SOURCE_DIRECTORY, DESTINATION_DIRECTORY, basepath)
-    generate_pages_recursive("./content", "./template.html", f"./docs/{basepath}", basepath)
+    copy_contents(SOURCE_DIRECTORY, DESTINATION_DIRECTORY)
+    generate_pages_recursive("./content", "./template.html", "./docs", basepath)
 
 if __name__ == "__main__":
     main()
